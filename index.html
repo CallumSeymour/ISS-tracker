@@ -1,20 +1,106 @@
+<!--
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFzBR0JMNI_YLv49ddpcCS5YWs6m7e-VM&callback=myMap"></script>
+AIzaSyAt1nwaxVo3yDWh1OZ03iQXgDE_VwCyrOM-->
+
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Project 3</title>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 
 <body>
+    <div id="map"></div>
+    <script>
+        //Set defaults
+        var latitude = -25.344;
+        var longitude = 131.036;
 
-    <h1>My First Google Map</h1>
 
-    <div id="googleMap" style="width:100%;height:400px;"></div>
+        // AJAX load of JSON data from ISS API
+        function loadData() {
+            var ourRequest = new XMLHttpRequest(); //Create a new request Object.
+            ourRequest.open("GET", "http://api.open-notify.org/iss-now.json", true); //Prepares the request and sets parameters for it. Will always use this as is.
+            ourRequest.onload = function() {
+                if (ourRequest.readyState == 4 && ourRequest.status == 200) { //Generic line for a loaded page. See XMLHTTP Properties.
+                    var myData = JSON.parse(ourRequest.responseText); //Parsing our data once page is ready - does not mean it will be displayed. 
+                    //Get lat. and long. from API
+                    latitudeNew = parseFloat(myData.iss_position.latitude);
+                    longitudeNew = parseFloat(myData.iss_position.longitude);
+                    LatLong(latitudeNew, longitudeNew);
+                } else { // If there is an error in the HTML.
+                    console.log("Working but error loading.");
+                }
+            }
+            ourRequest.send();
+        }
+        loadData();
 
-    <script src="resources/scripts/myscript.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFzBR0JMNI_YLv49ddpcCS5YWs6m7e-VM&callback=myMap"></script>
+        function LatLong(a, b) {
+            latitude = a;
+            longitude = b;
 
+        }
+
+        function initMap() {
+
+            // The location
+            var location = {
+                lat: latitude,
+                lng: longitude
+            };
+
+            // The map, centered at location
+            var map = new google.maps.Map(
+                document.getElementById('map'), {
+                    zoom: 2,
+                    center: location
+                });
+            // The marker, positioned at the location
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map
+            });
+            
+            function updateISSPosition () {
+            marker.setPosition(new google.maps.LatLng(latitude,longitude));
+        }
+
+        setInterval(loadData, 1000);
+        setInterval(updateISSPosition, 1000);
+        }
+        
+//        function updateISSPosition () {
+//            marker.setPosition(new google.maps.LatLng(latitude,longitude));
+//        }
+//
+//        setInterval(loadData, 1000);
+//        setInterval(updateISSPosition, 1000);
+        
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFzBR0JMNI_YLv49ddpcCS5YWs6m7e-VM&callback=initMap" async defer></script>
 </body>
 
 </html>

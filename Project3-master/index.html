@@ -1,0 +1,198 @@
+<!--
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFzBR0JMNI_YLv49ddpcCS5YWs6m7e-VM&callback=myMap"></script>
+AIzaSyAt1nwaxVo3yDWh1OZ03iQXgDE_VwCyrOM-->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"><div id="marker"></div></div>
+    
+    <script>
+        //Set defaults
+        var latitude = -25.344;
+        var longitude = 131.036;
+
+
+        // AJAX load of JSON data from ISS API
+        function loadData() {
+            var ourRequest = new XMLHttpRequest(); //Create a new request Object.
+            ourRequest.open("GET", "http://api.open-notify.org/iss-now.json", true); //Prepares the request and sets parameters for it. Will always use this as is.
+            ourRequest.onload = function() {
+                if (ourRequest.readyState == 4 && ourRequest.status == 200) { //Generic line for a loaded page. See XMLHTTP Properties.
+                    var myData = JSON.parse(ourRequest.responseText); //Parsing our data once page is ready - does not mean it will be displayed. 
+                    //Get lat. and long. from API
+                    latitudeNew = parseFloat(myData.iss_position.latitude);
+                    longitudeNew = parseFloat(myData.iss_position.longitude);
+                    LatLong(latitudeNew, longitudeNew);
+                } else { // If there is an error in the HTML.
+                    console.log("Working but error loading.");
+                }
+            }
+            ourRequest.send();
+        }
+        loadData();
+
+        function LatLong(a, b) {
+            latitude = a;
+            longitude = b;
+
+        }
+
+        function initMap() {
+
+            // The location
+            var location = {
+                lat: latitude,
+                lng: longitude
+            };
+
+            // The map, centered at location
+            var map = new google.maps.Map(
+                document.getElementById('map'), {
+                    zoom: 2,
+                    center: location,
+                    styles: [
+                      {
+                        "featureType": "water",
+                        "stylers": [
+                          { "color": "#6b8080" },
+                          { "lightness": -26 }
+                        ]
+                      },{
+                        "featureType": "landscape",
+                        "elementType": "geometry",
+                        "stylers": [
+                          { "color": "#758080" },
+                          { "lightness": 8 }
+                        ]
+                      },{
+                        "featureType": "poi",
+                        "elementType": "geometry",
+                        "stylers": [
+                          { "visibility": "simplified" },
+                          { "color": "#6a8080" }
+                        ]
+                      },{
+                        "featureType": "road",
+                        "elementType": "geometry.fill",
+                        "stylers": [
+                          { "color": "#4c8080" },
+                          { "lightness": -13 }
+                        ]
+                      },{
+                        "featureType": "road",
+                        "elementType": "geometry.stroke",
+                        "stylers": [
+                          { "color": "#608080" },
+                          { "lightness": 26 }
+                        ]
+                      },{
+                        "elementType": "labels.icon",
+                        "stylers": [
+                          { "lightness": -56 },
+                          { "hue": "#00ffa2" }
+                        ]
+                      },{
+                      },{
+                        "featureType": "landscape",
+                        "elementType": "labels"  },{
+                        "featureType": "poi",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                          { "invert_lightness": true }
+                        ]
+                      },{
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                          { "lightness": 100 }
+                        ]
+                      },{
+                        "elementType": "labels.text.stroke",
+                        "stylers": [
+                          { "color": "#518080" },
+                          { "lightness": -34 }
+                        ]
+                      },{
+                        "featureType": "transit",
+                        "elementType": "geometry",
+                        "stylers": [
+                          { "color": "#5f8080" },
+                          { "lightness": -10 },
+                          { "saturation": 22 }
+                        ]
+                      },{
+                        "featureType": "administrative.country",
+                        "elementType": "geometry.stroke",
+                        "stylers": [
+                          { "color": "#4f8080" },
+                          { "lightness": -16 }
+                        ]
+                      },{
+                        "featureType": "administrative.province",
+                        "elementType": "geometry.stroke",
+                        "stylers": [
+                          { "color": "#668080" }
+                        ]
+                      },{
+                        "elementType": "labels.icon"  }
+                    ]
+                });
+            // The marker, positioned at the location
+            var icon = { 
+                url: "http://icons.iconarchive.com/icons/goodstuff-no-nonsense/free-space/1024/satellite-icon.png",
+                scaledSize: new google.maps.Size(70, 70)
+            };
+            var marker = new google.maps.Marker({
+                position: location,
+                map: map,
+                icon: icon
+            });
+            
+            
+            function updateISSPosition () {
+            marker.setPosition(new google.maps.LatLng(latitude,longitude));
+        }
+
+        setInterval(loadData, 1000);
+        setInterval(updateISSPosition, 1000);
+        }
+        
+//        function updateISSPosition () {
+//            marker.setPosition(new google.maps.LatLng(latitude,longitude));
+//        }
+//
+//        setInterval(loadData, 1000);
+//        setInterval(updateISSPosition, 1000);
+        
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDFzBR0JMNI_YLv49ddpcCS5YWs6m7e-VM&callback=initMap" async defer></script>
+</body>
+
+</html>

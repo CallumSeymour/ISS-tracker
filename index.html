@@ -31,7 +31,8 @@ AIzaSyAt1nwaxVo3yDWh1OZ03iQXgDE_VwCyrOM-->
 </head>
 
 <body>
-    <div id="map"></div>
+    <div id="map"><div id="marker"></div></div>
+    
     <script>
         //Set defaults
         var latitude = -25.344;
@@ -75,13 +76,20 @@ AIzaSyAt1nwaxVo3yDWh1OZ03iQXgDE_VwCyrOM-->
             var map = new google.maps.Map(
                 document.getElementById('map'), {
                     zoom: 2,
-                    center: location
+                    center: location,
+                    mapTypeId: 'satellite'
                 });
             // The marker, positioned at the location
+            var icon = { 
+                url: '/resources/img/ISSimage.png',
+                scaledSize: new google.maps.Size(50, 50),
+            };
             var marker = new google.maps.Marker({
                 position: location,
-                map: map
+                map: map,
+                icon: icon
             });
+            
             
             function updateISSPosition () {
             marker.setPosition(new google.maps.LatLng(latitude,longitude));
